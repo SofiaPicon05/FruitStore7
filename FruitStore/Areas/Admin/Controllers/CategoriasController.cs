@@ -52,5 +52,64 @@ namespace FruitStore.Areas.Admin.Controllers
 
             return View(c);
         }
+
+        public IActionResult Editar (int id)
+        {
+            var cat = Repository.Get(id);
+            if(cat == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            return View(cat);
+        }
+        [HttpPost]
+        public IActionResult Editar (Categorias c)
+        {
+            var catBD = Repository.Get(c.Id);
+            if(catBD== null)
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(c.Nombre))
+                {
+                    ModelState.AddModelError("", "Debe de escribir el nombre de la categoria");
+                }
+                if (ModelState.IsValid)
+                {
+                    catBD.Nombre = c.Nombre;
+                    Repository.Update(catBD);
+                    return RedirectToAction("Index");
+                }
+            }
+            return View(c);
+        }
+
+        public IActionResult Eliminar(int id)
+        {
+            var cat = Repository.Get(id);
+            if (cat == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            return View(cat);
+        }
+        [HttpPost]
+        public IActionResult Eliminar(Categorias c)
+        {
+            var cat = Repository.Get(c.Id);
+            if(cat != null)
+            {
+                Repository.Delete(cat);
+                
+            }
+
+            return RedirectToAction("Index");
+
+
+        }
     }
 }

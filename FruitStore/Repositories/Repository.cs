@@ -30,11 +30,8 @@ namespace FruitStore.Repositories
 		}
 		public virtual void Delete(object id)
 		{
-			var entity = Get(id);
-			if(entity != null) 
-			{
-				Delete(entity);
-		    }
+			Ctx.Remove(id);
+			Ctx.SaveChanges();
 		}
 	}
 	

@@ -1,0 +1,25 @@
+﻿@model FruitStore.Models.Entities.Categorias
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<form method="post" action="~/Admin/Categorias/Eliminar">
+    <div>
+        <h1>Eliminar Categoría</h1>
+
+        <input hidden asp-for="Id">
+
+        <p>¿Está seguro de eliminar la categoría "@Model.Nombre"?</p>
+
+        <div class="botones">
+            <p id="error">@Html.ValidationSummary(true)</p>
+            <input type="submit" value="Si" id="btnSi" />
+            <a href="~/Admin/Categorias">
+                <input type="button" value="No" id="btnNo" />
+            </a>
+        </div>
+    </div>
+</form>
+
