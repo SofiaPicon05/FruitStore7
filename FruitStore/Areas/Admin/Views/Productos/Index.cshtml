@@ -6,33 +6,24 @@
 }
 <h1>Administrar Productos</h1>
 
+
 <section class="lista">
-    <form method="post" action="~/Admin/Productos/Index">
-        <select asp-items="@(new SelectList(Model.Categorias,"Id", "Nombre"))" 
-        asp-for="IdCategoriaSeleccionada" >
-            <option>--- Mostrar todos los productos---</option>
+    <form asp-action="Index" asp-controller="Productos" asp-area="Admin" >
+        <select asp-for="IdCategoriaSeleccionada" asp-items="@(new SelectList(Model.Categorias, "Id", "Nombre"))" onchange="this.form.submit()">
+            <option>---Mostrar todos los productos---</option>
         </select>
     </form>
     <ul>
-        <li><a href="~/Admin/Productos/Agregar"><img src="~/images/add.png" /> Nuevo producto</a></li>
-        <li>
-            @foreach(var p in Model.Productos)
-            {
-                @if (Model.IdCategoriaSeleccionada == 0)
-                {
-                    @(p.Nombre+"-"+p.Categoria)
-                }
-                else
-                {
-                    @p.Nombre
-                }
-               
-               <a href = "~/Admin/Productos/Editar/@p.Id" class="btnEditar"></a>
-            <a href = "~/Admin/Productos/Eliminar/@p.Id" class="btnBorrar"></a>
-            }            
-        </li>
+        <li><a href="~/Admin/Productos/Agregar"><img src="~/images/add.png" />Nuevo producto</a></li>
+        @foreach (var producto in Model.Productos)
+        {
+            <li>
+                @(Model.IdCategoriaSeleccionada != 0 ? $"{producto.Nombre} - {producto.Categoria}" : producto.Nombre)
+                <a href="~/Admin/Productos/Editar/@(producto.Nombre)" class="btnEditar"></a>
+                <a href="~/Admin/Productos/Eliminar/@(producto.Nombre)" class="btnBorrar"></a>
+            </li>
+        }
     </ul>
-
 </section>
 
 

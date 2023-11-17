@@ -9,6 +9,14 @@ namespace FruitStore.Repositories
         {
 
         }
+
+        public override IEnumerable<Productos> GetAll()
+        {
+            return Ctx.Productos
+                .Include(x => x.IdCategoriaNavigation).OrderBy(x => x.Nombre);
+        }
+
+
         public IEnumerable<Productos>GetProductosByCategoria(string categoria)
         {
             return Ctx.Productos
@@ -18,6 +26,17 @@ namespace FruitStore.Repositories
                 ==categoria)
                 .OrderBy(x=>x.Nombre) ;
         }
+        public IEnumerable<Productos> GetProductosByCategoria(int categoria)
+        {
+            return Ctx.Productos
+                .Include(x => x.IdCategoriaNavigation)
+                .Where(x => x.IdCategoriaNavigation != null &&
+                x.IdCategoriaNavigation.Id
+                == categoria)
+                .OrderBy(x => x.Nombre);
+        }
+
+
         public Productos? GetByNombre (string nombre)
         {
             return Ctx.Productos
