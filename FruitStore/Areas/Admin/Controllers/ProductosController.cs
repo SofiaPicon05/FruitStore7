@@ -60,13 +60,47 @@ namespace FruitStore.Areas.Admin.Controllers
 
         public IActionResult Agregar()
         {
+            AdminAgregarProductosViewModel vm = new();
+            vm.Categorias = categoriasRepository.GetAll().OrderBy(x => x.Nombre)
+                .Select(x => new CategoriaModel
+                {
+                    Id = x.Id,
+                    Nombre = x.Nombre ?? ""
+                });
 
-            return View();
+            
+            return View(vm);
         }
         [HttpPost]
         public IActionResult Agregar(AdminAgregarProductosViewModel vm)
         {
-            return View();
+            //validar
+
+            if(vm.Archivo != null) // Si selecciono un archivo
+            {
+
+                //MIME TYPE
+                if(vm.Archivo.ContentType != "image/jpeg")
+                {
+                    ModelState.AddModelError("", "Solo se permiten imagenes JPG");
+                }
+                if(vm.Archivo.Length< 500 * 1024)
+                {
+                    ModelState.AddModelError("", "Solo se permiten archivos no mayores a 500kb");
+                }
+            }
+
+            if(ModelState.IsValid)  // cuando es valido
+            {
+                productosRepository.Insert(vm.Producto);
+                if (vm.Archivo == null)  // No eligio archivo
+                {
+                    //1.obtener el id del producto
+                    //2. copiar el archivo llamado no disponible jpg y cambiarle el nombre por el id
+                }
+
+            }
+            return View(vm);
         }
     }
 }
