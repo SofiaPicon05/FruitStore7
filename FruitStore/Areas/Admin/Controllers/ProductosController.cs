@@ -97,10 +97,89 @@ namespace FruitStore.Areas.Admin.Controllers
                 {
                     //1.obtener el id del producto
                     //2. copiar el archivo llamado no disponible jpg y cambiarle el nombre por el id
+                    System.IO.File.Copy("wwwroot/img_frutas/0.jpg", $"wwwroot/img_frutas/{vm.Producto.Id}.jpg");
                 }
+                else
+                {
+                    System.IO.FileStream fs = System.IO.File.Create($"wwwroot/img_frutas/{vm.Producto.Id}.jpg");
+                    vm.Archivo.CopyTo(fs);
+                    fs.Close();
+                }
+                return RedirectToAction("Index");
 
             }
+            vm.Categorias = categoriasRepository.GetAll().OrderBy(x => x.Nombre).Select(x => new CategoriaModel()
+            {
+                Id=x.Id,
+                Nombre=x.Nombre ?? ""
+            });
             return View(vm);
         }
+
+
+        public IActionResult Editar(int id)
+        {
+            var producto = productosRepository.Get(id);
+            if (producto == null)
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                AdminAgregarProductosViewModel vm = new();
+                vm.Producto = producto;
+                vm.Categorias = categoriasRepository.GetAll().OrderBy(x => x.Nombre)
+                .Select(x => new CategoriaModel
+                {
+                    Id = x.Id,
+                    Nombre = x.Nombre ?? ""
+                });
+
+                return View(vm);
+            }
+
+           
+        }
+
+
+        [HttpPost]
+        public IActionResult Editar(AdminAgregarProductosViewModel vm)
+        {
+            //Validar
+
+            if (vm.Archivo != null) // Si selecciono un archivo
+            {
+
+                //MIME TYPE
+                if (vm.Archivo.ContentType != "image/jpeg")
+                {
+                    ModelState.AddModelError("", "Solo se permiten imagenes JPG");
+                }
+                if (vm.Archivo.Length < 500 * 1024)
+                {
+                    ModelState.AddModelError("", "Solo se permiten archivos no mayores a 500kb");
+                }
+            }
+            if (ModelState.IsValid)
+            {
+                var producto = productosRepository.Get(vm.Producto.Id); // oBTENIENDO LA ENTIDAD QUE CORRESPONDE AL PRODUCTO DEL VM
+                if(producto == null)
+                {
+                    return RedirectToAction("Index");
+                }
+                producto.Nombre = vm.Producto.Nombre;
+                producto.Precio = vm.Producto.Precio;
+                producto.Descripcion = vm.Producto.Descripcion;
+                producto.UnidadMedida = vm.Producto.UnidadMedida;
+                producto.IdCategoria = vm.Producto.IdCategoria;
+
+                productosRepository.Update(producto);
+
+                //editar la foto
+
+            }
+            return View();
+        }
+        
     }
 }

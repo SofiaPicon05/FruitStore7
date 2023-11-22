@@ -1,13 +1,16 @@
 ﻿@model FruitStore.Areas.Admin.Models.AdminAgregarProductosViewModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    
+
     Layout = "_LayoutAdmin";
 }
 
-<form method="post" action="~/Admin/Productos/Agregar" enctype="multipart/form-data">
+<form method="post" action="~/Admin/Productos/Editar" enctype="multipart/form-data">
     <div>
-        <h1>Agregar Producto</h1>
+        <h1>Editar Producto</h1>
+
+        @*Al editar necesito el ID*@
+        <input type="hidden" asp-for="Producto.Id"/>
 
         <label>Nombre:</label>
         <input type="text" id="txtNombre" asp-for="Producto.Nombre" />
@@ -15,12 +18,12 @@
 
         <label>Categoría:</label>
         <select id="cmbCategoria" asp-for="Producto.IdCategoria"
-        asp-items="@(new SelectList(Model.Categorias,"Id", "Nombre"))">
+                asp-items="@(new SelectList(Model.Categorias,"Id", "Nombre"))">
             <option>-- Seleccionar categoria --</option>
         </select>
 
         <label>Unidad de Medida:</label>
-        <input type="text" id="txtUnidadMedida" asp-for="Producto.UnidadMedida"/>
+        <input type="text" id="txtUnidadMedida" asp-for="Producto.UnidadMedida" />
 
         <label>Precio:</label>
         <input type="number" id="txtPrecio" asp-for="Producto.Precio" />
@@ -31,12 +34,12 @@
         <label>Imagen:</label>
         <input type="file" id="fileUpload1" accept="image/jpeg" asp-for="Archivo" />
 
-        <img id="imagePreview" src="~/img_frutas/no-disponible.png" />
+        <img id="imagePreview" src="~/img_frutas/@(Model.Producto.Id).jpg" />
 
 
         <div class="botones">
             <p id="error" @Html.ValidationSummary(true)></p>
-            <input type="submit" value="Agregar" id="btnAgregar" />
+            <input type="submit" value="Guardar" id="btnGuardar" />
             <a href="~/Admin/Productos">
                 <input type="button" value="Cancelar" id="btnCancelar" />
             </a>
