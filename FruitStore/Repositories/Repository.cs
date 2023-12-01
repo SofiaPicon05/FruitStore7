@@ -4,12 +4,12 @@ namespace FruitStore.Repositories
 {
 	public class Repository<T> where T : class
 	{
-		public Repository(FruteriaShopContext ctx)
+		public Repository(FruteriashopContext ctx)
 		{
 			Ctx = ctx;
 		}
 
-		public FruteriaShopContext Ctx { get; }
+		public FruteriashopContext Ctx { get; }
 		public virtual IEnumerable<T> GetAll()
 		{
 			return Ctx.Set<T>();

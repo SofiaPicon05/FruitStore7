@@ -1,11 +1,13 @@
 ﻿using FruitStore.Areas.Admin.Models;
 using FruitStore.Models.Entities;
 using FruitStore.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace FruitStore.Areas.Admin.Controllers
 {
+    [Authorize(Roles ="Administrador")]
     [Area("Admin")]
     public class CategoriasController : Controller
     {
@@ -29,8 +31,6 @@ namespace FruitStore.Areas.Admin.Controllers
             
             return View(vm);
         }
-
-
         public IActionResult Agregar()
         {
 

@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FruitStore.Models.Entities;
 
-public partial class FruteriaShopContext : DbContext
+public partial class FruteriashopContext : DbContext
 {
-    public FruteriaShopContext()
+    public FruteriashopContext()
     {
     }
 
-    public FruteriaShopContext(DbContextOptions<FruteriaShopContext> options)
+    public FruteriashopContext(DbContextOptions<FruteriashopContext> options)
         : base(options)
     {
     }
@@ -19,12 +19,9 @@ public partial class FruteriaShopContext : DbContext
 
     public virtual DbSet<Productos> Productos { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
+    public virtual DbSet<Usuarios> Usuarios { get; set; }
 
-    }
-      
-
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -66,6 +63,19 @@ public partial class FruteriaShopContext : DbContext
             entity.HasOne(d => d.IdCategoriaNavigation).WithMany(p => p.Productos)
                 .HasForeignKey(d => d.IdCategoria)
                 .HasConstraintName("fk_categorias");
+        });
+
+        modelBuilder.Entity<Usuarios>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("usuarios");
+
+            entity.Property(e => e.Contrasena)
+                .HasMaxLength(128)
+                .IsFixedLength();
+            entity.Property(e => e.CorreoElectronico).HasMaxLength(255);
+            entity.Property(e => e.Nombre).HasMaxLength(100);
         });
 
         OnModelCreatingPartial(modelBuilder);

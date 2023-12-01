@@ -11,7 +11,7 @@
     {
         <a href="~/Home/Ver/@p.Nombre.Replace(" ","-")">
             <div>
-                <img src="~/img_frutas/@(p.Id).jpg">
+                <img src="~/img_frutas/@(p.Id).jpg?f=@(p.FechaModificacion)">
             </div>
             <h2>@p.Nombre</h2>
             <h3>@p.Precio.ToString("c")</h3>

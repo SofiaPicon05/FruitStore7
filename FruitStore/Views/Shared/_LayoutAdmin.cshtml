@@ -10,7 +10,12 @@
     <header></header>
     <nav>
         <a href="~/Admin">Principal</a>
-        <a href="~/Admin/Categorias">Administrar Categorias</a>
+
+        @if (User.IsInRole("Administrador"))
+        {
+            <a href="~/Admin/Categorias">Administrar Categorias</a>
+        }
+       
         <a href="~/Admin/Productos">Administrar Productos</a>
         <a href="~/Home/CerrarSesion">Cerrar sesión</a>
     </nav>

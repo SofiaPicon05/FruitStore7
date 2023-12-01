@@ -3,9 +3,11 @@ using FruitStore.Areas.Admin.Models;
 using FruitStore.Repositories;
 using FruitStore.Models.Entities;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FruitStore.Areas.Admin.Controllers
 {
+    [Authorize]
     [Area("Admin")]
     public class ProductosController : Controller
     {
@@ -21,6 +23,7 @@ namespace FruitStore.Areas.Admin.Controllers
 
         [HttpGet]
         [HttpPost]
+        [Authorize(Roles = "Administrador, Supervisor")]
         public IActionResult Index(AdminProductosViewModel vm)
         {
             vm.Categorias=categoriasRepository.GetAll().OrderBy(x=>x.Nombre)
@@ -28,8 +31,7 @@ namespace FruitStore.Areas.Admin.Controllers
                 {
                 Id = x.Id,
                 Nombre=x.Nombre?? ""
-                });
-                
+                });         
             
             if (vm.IdCategoriaSeleccionada == 0) //regresa todo
             {
@@ -39,11 +41,7 @@ namespace FruitStore.Areas.Admin.Controllers
                         Id = x.Id,
                         Nombre = x.Nombre?? "",
                         Categoria = x.IdCategoriaNavigation?.Nombre??""
-                    });
-                
-                  
-                
-                
+                    });  
             }
             else // de la categoria seleccionada
             {
@@ -56,8 +54,7 @@ namespace FruitStore.Areas.Admin.Controllers
             }
             return View(vm);
         }
-
-
+        [Authorize(Roles = "Administrador")]
         public IActionResult Agregar()
         {
             AdminAgregarProductosViewModel vm = new();
@@ -67,8 +64,6 @@ namespace FruitStore.Areas.Admin.Controllers
                     Id = x.Id,
                     Nombre = x.Nombre ?? ""
                 });
-
-            
             return View(vm);
         }
         [HttpPost]
@@ -115,8 +110,7 @@ namespace FruitStore.Areas.Admin.Controllers
             });
             return View(vm);
         }
-
-
+        [Authorize(Roles = "Administrador, Supervisor")]
         public IActionResult Editar(int id)
         {
             var producto = productosRepository.Get(id);
@@ -136,11 +130,8 @@ namespace FruitStore.Areas.Admin.Controllers
                 });
 
                 return View(vm);
-            }
-
-           
+            }   
         }
-
 
         [HttpPost]
         public IActionResult Editar(AdminAgregarProductosViewModel vm)
@@ -155,7 +146,7 @@ namespace FruitStore.Areas.Admin.Controllers
                 {
                     ModelState.AddModelError("", "Solo se permiten imagenes JPG");
                 }
-                if (vm.Archivo.Length < 500 * 1024)
+                if (vm.Archivo.Length > 500 * 1024)
                 {
                     ModelState.AddModelError("", "Solo se permiten archivos no mayores a 500kb");
                 }
@@ -177,8 +168,47 @@ namespace FruitStore.Areas.Admin.Controllers
 
                 //editar la foto
 
+                if (vm.Archivo == null)
+                {
+                    System.IO.FileStream fs = System.IO.File.Create($"wwwroot/img_frutas/{vm.Producto.Id}.jpg");
+                    vm.Archivo.CopyTo(fs);
+                    fs.Close();
+                }
+                return RedirectToAction("Index");
             }
-            return View();
+            vm.Categorias = categoriasRepository.GetAll().OrderBy(x => x.Nombre).Select(x => new CategoriaModel()
+            {
+                Id = x.Id,
+                Nombre = x.Nombre ?? ""
+            });
+            return View(vm);
+        }
+        [Authorize(Roles = "Administrador")]
+        public IActionResult Eliminar(int id)
+        {
+            var producto = productosRepository.Get(id);
+            if (producto == null)
+            {
+                return RedirectToAction("Index");
+            }
+            return View(producto);
+        }
+        [HttpPost]
+        public IActionResult Eliminar(Productos p)
+        {
+            var producto = productosRepository.Get(p.Id);
+            if (producto == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            productosRepository.Delete(producto);
+            var ruta = $"wwwroot/img_frutas/{p.Id}.jpg";
+            if (System.IO.File.Exists(ruta))
+            {
+                System.IO.File.Delete(ruta);
+            }
+            return RedirectToAction("Index");  
         }
         
     }

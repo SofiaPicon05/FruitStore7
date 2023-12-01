@@ -1,4 +1,5 @@
 ﻿@model FruitStore.Models.ViewModels.VerProductoViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = "_Layout";
 }
@@ -6,7 +7,7 @@
 <div class="datosproductos">
     <h1 id="nombre">@Model.Nombre</h1>
 
-    <img src="~/img_frutas/@(Model.Id).jpg" id="imagen" />
+    <img src="~/img_frutas/@(Model.Id).jpg" id="imagen" asp-append-version />
     <p>
         <label>Precio:</label>
         <label id="precio">@Model.Precio.ToString("c")</label>

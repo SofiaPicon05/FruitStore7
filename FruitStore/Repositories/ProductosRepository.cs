@@ -1,11 +1,12 @@
 ﻿using FruitStore.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace FruitStore.Repositories
 {
     public class ProductosRepository : Repository<Productos>
     {
-        public ProductosRepository(FruteriaShopContext ctx) : base(ctx)
+        public ProductosRepository(FruteriashopContext ctx) : base(ctx)
         {
 
         }
@@ -13,7 +14,8 @@ namespace FruitStore.Repositories
         public override IEnumerable<Productos> GetAll()
         {
             return Ctx.Productos
-                .Include(x => x.IdCategoriaNavigation).OrderBy(x => x.Nombre);
+                .Include(x => x.IdCategoriaNavigation).
+                OrderBy(x => x.Nombre);
         }
 
 
